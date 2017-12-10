@@ -15,16 +15,10 @@ public class Bot : MonoBehaviour {
 		f = Random.value * 360.0f;
 		setRotation (f);
 		gameObject.SetActive (true);
-		//setSize (Random.value * 2.0f + 1.0f);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-
 	}
 
 	// Update is called once every physics update
-	void FixedUpdate() {
+	void FixedUpdate () {
 		// Move in the direction it is facing
 		// TODO: Add acceleration and max speeds
 		transform.Translate(Vector3.right * maxSpeed * Time.deltaTime);
@@ -32,7 +26,7 @@ public class Bot : MonoBehaviour {
 	}
 
 	// Keeps bot inbounds, happens every fixedUpdate
-	private void stayInBounds() {
+	private void stayInBounds () {
 		float max_x = ground.transform.localScale.x / 2;
 		float max_y = ground.transform.localScale.y / 2;
 		float radius = getSize () / 2;
@@ -51,31 +45,31 @@ public class Bot : MonoBehaviour {
 	}
 
 	// Get size
-	public float getSize() {
+	public float getSize () {
 		return transform.localScale.x;
 	}
 
 	// Set size, always equal sizes on x and y
-	public void setSize(float newSize) {
+	public void setSize (float newSize) {
 		Vector3 newScale = new Vector3 (newSize, newSize, 1f);
 		transform.localScale = newScale;
 	}
 
 	// Return rotation as a Quaternion
-	public Quaternion getRotation() {
+	public Quaternion getRotation () {
 		return transform.rotation;
 	}
 
 	// Set rotation as a degree from 0 to 359. Handle overflow in this function
-	public void setRotation(float newRotation) {
+	public void setRotation (float newRotation) {
 		transform.rotation = Quaternion.Euler(0, 0, newRotation);
 	}
 
-	public Vector3 getPosition() {
+	public Vector3 getPosition () {
 		return transform.position;
 	}
 
-	public void setPosition(Vector3 newPosition) {
+	public void setPosition (Vector3 newPosition) {
 		transform.position = newPosition;
 	}
 }

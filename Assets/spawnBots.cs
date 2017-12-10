@@ -12,11 +12,10 @@ public class spawnBots : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		spawn ();
-
 	}
 
 	// Spawn the bots randomly on the available ground
-	private void spawn() {
+	private void spawn () {
 		// TODO: Remove any overlapping upon spawning
 		float width = groundToSpawnOn.transform.localScale.x;
 		float height = groundToSpawnOn.transform.localScale.y;
@@ -28,10 +27,5 @@ public class spawnBots : MonoBehaviour {
 				0));
 			thing.name = "Bot" + spawnCount;
 		}
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 }
