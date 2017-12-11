@@ -17,12 +17,41 @@ public class Bot : MonoBehaviour {
 		gameObject.SetActive (true);
 	}
 
+	void Update () {
+		checkBotOverlap ();
+		if (getSize() < 0.3f)
+			kill ();
+	}
+
 	// Update is called once every physics update
 	void FixedUpdate () {
 		// Move in the direction it is facing
 		// TODO: Add acceleration and max speeds
 		transform.Translate(Vector3.right * maxSpeed * Time.deltaTime);
 		stayInBounds ();
+		setSize (getSize () - 0.005f);
+	}
+
+	private void checkBotOverlap () {
+		Collider2D[] potentialBots = Physics2D.OverlapCircleAll (transform.position, getSize());
+		foreach (Collider2D bot in potentialBots) {
+			if (bot.gameObject == gameObject)
+				continue;
+			float distance = Vector2.Distance (transform.position, bot.transform.position);
+			if (distance + bot.gameObject.transform.localScale.x / 2.0f <= getSize () / 2.0f) {
+				bot.SendMessage ("kill");
+				setSize (getSize () + 0.1f);
+			}
+		}
+	}
+
+	private void kill () {
+		print ("KILLED");
+		setPosition (new Vector3 (
+			Random.value * 50 - 50 / 2.0f, 
+			Random.value * 50 - 50 / 2.0f, 
+			0));
+		setSize (1.0f);
 	}
 
 	// Keeps bot inbounds, happens every fixedUpdate

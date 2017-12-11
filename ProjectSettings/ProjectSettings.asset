@@ -462,8 +462,9 @@ PlayerSettings:
   XboxOneAllowedProductIds: []
   XboxOnePersistentLocalStorageSize: 0
   vrEditorSettings: {}
-  cloudServicesEnabled: {}
-  cloudProjectId: 
-  projectName: 
-  organizationId: 
+  cloudServicesEnabled:
+    UNet: 1
+  cloudProjectId: d4698f19-81c4-43cd-91b4-e18100bc2a62
+  projectName: Smartar.io
+  organizationId: loedingup
   cloudEnabled: 0

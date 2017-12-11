@@ -33,6 +33,12 @@ public class Brain : MonoBehaviour {
 			else {
 				inputs [counter] = 1;
 				Debug.DrawRay (transform.position, hits[1].collider.gameObject.transform.position - transform.position, Color.black);
+				float enemy_angle = Vector2.Angle (Vector2.right, (Vector2)hits[1].collider.gameObject.transform.position - (Vector2)transform.position);
+				// If the enemy is below me, subtract angle from 360 to get the correct angle.
+				if (hits[1].collider.gameObject.transform.position.y < transform.position.y)
+					enemy_angle = 360.0f - enemy_angle;
+				gameObject.GetComponent<Bot> ().setRotation (enemy_angle);
+				break;
 			}
 			counter++;
 		}
