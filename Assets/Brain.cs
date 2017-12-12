@@ -12,36 +12,41 @@ public class Brain : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		inputs = new float[360];
 		nn = gameObject.GetComponent<NeuralNetwork> ();
+		inputs = new float[nn.numOfInputs];
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
 		updateInputs ();
-		//nn.feedForward (inputs);
-		//gameObject.GetComponent<Bot> ().setRotation (nn.output[0]);
+		nn.feedForward (inputs);
+		gameObject.GetComponent<Bot> ().setRotation (nn.output[0]);
 	}
 
 	private void updateInputs () {
-		for (int counter = 0; counter < 360; counter++) {
+		int increment = (int) (360.0f / (float) inputs.Length);
+		for (int counter = 0; counter < 360; counter+=increment) {
 			// Convert counter to angle to vector
 			float angle = (float)counter * Mathf.PI / 180.0f;
 			Vector2 direction = new Vector2 (Mathf.Cos (angle), Mathf.Sin (angle));
 			Vector2 castVector = (Vector2)transform.position + direction * (transform.localScale.x + 0.02f) / 2.0f;
 			RaycastHit2D hit = Physics2D.Raycast(castVector, direction, sightRange);
+			//Debug.DrawRay (castVector, direction * sightRange, Color.black);
 
 			if (hit) {
 				float edible = -1.0f;
 				float enemySize = hit.collider.transform.localScale.x;
 				if (enemySize < transform.localScale.x)
 					edible = 1.0f;
-				inputs [counter] = (edible) * (enemySize) / (hit.distance);
+				float distanceToEnemy = hit.distance;
+				if (distanceToEnemy < 0.001f)
+					distanceToEnemy = 0.001f;
+				inputs [counter / increment] = (edible) * (enemySize) / (distanceToEnemy);
 				//print (inputs[counter]);
-				Debug.DrawRay (castVector, direction * hit.distance, Color.black,0.1f);
+				Debug.DrawRay (castVector, direction * hit.distance, Color.black);
+
 			} else
-				inputs [counter] = 0.0f;
-			counter++;
+				inputs [counter / increment] = 0.0f;
 		}
 
 		// Temporary code to follow best individual

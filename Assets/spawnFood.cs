@@ -17,10 +17,9 @@ public class spawnFood : MonoBehaviour {
 	// Spawn the bots randomly on the available ground
 	private void spawn () {
 		// TODO: Remove any overlapping upon spawning
-		float width = groundToSpawnOn.transform.localScale.x - 1.0f;
-		float height = groundToSpawnOn.transform.localScale.y - 1.0f;
 		for (int spawnCount = 0; spawnCount < numberToSpawn; spawnCount++) {
-			GameObject thing = (GameObject)Instantiate (thingToSpawn);
+			GameObject thing = (GameObject)Instantiate (thingToSpawn, this.transform);
+			thing.GetComponent<Food> ().ground = groundToSpawnOn;
 			thing.GetComponent<Food> ().kill ();
 			thing.name = "Food" + spawnCount;
 		}

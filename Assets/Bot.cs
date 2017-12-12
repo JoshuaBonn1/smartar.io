@@ -10,6 +10,15 @@ public class Bot : MonoBehaviour {
 	public GameObject ground;
 	public float sizeReduction;
 
+	private int thingsEaten = 0;
+	public float thingsEatenWeight;
+	private float maxSize = 1.0f;
+	public float maxSizeWeight;
+	private long lifespan = 0;
+	public float lifespanWeight;
+
+	public float fitness;
+
 
 	// Use this for initialization
 	void Start () {
@@ -31,6 +40,7 @@ public class Bot : MonoBehaviour {
 		transform.Translate (Vector3.right * maxSpeed * Mathf.Sqrt(getSize()) * Time.deltaTime);
 		stayInBounds ();
 		setSize (getSize () * sizeReduction);
+		lifespan++;
 	}
 
 	private void checkBotOverlap () {
@@ -39,19 +49,45 @@ public class Bot : MonoBehaviour {
 			if (bot.gameObject == gameObject)
 				continue;
 			float distance = Vector2.Distance (transform.position, bot.transform.position);
+			// Eat food on collision
+			if (bot.name.Contains ("Food") && distance <= getSize() / 2.0f + bot.gameObject.transform.localScale.x / 2.0f) {
+				bot.SendMessage ("kill");
+				thingsEaten++;
+				setSize (getSize () + 0.2f * bot.gameObject.transform.localScale.x);
+				if (getSize () > maxSize)
+					maxSize = getSize ();
+				continue;
+			}
+			// Eat bots on overlap
 			if (distance + bot.gameObject.transform.localScale.x / 2.0f <= getSize () / 2.0f) {
 				bot.SendMessage ("kill");
+				thingsEaten++;
 				setSize (getSize () + 0.2f * bot.gameObject.transform.localScale.x);
+				if (getSize () > maxSize)
+					maxSize = getSize ();
 			}
 		}
 	}
 
 	private void kill () {
-		setPosition (new Vector3 (
-			Random.value * 50 - 50 / 2.0f, 
-			Random.value * 50 - 50 / 2.0f, 
-			0));
 		setSize (1.0f);
+		float width = ground.transform.localScale.x - 1.0f;
+		float height = ground.transform.localScale.y - 1.0f;
+		Vector3 newPosition;
+		int tries = 5;
+		do { 
+			newPosition = new Vector3 (
+				Random.value * width - width / 2.0f, 
+				Random.value * height - height / 2.0f, 
+				0);
+			tries--;
+		} while (Physics2D.OverlapCircle (newPosition, transform.localScale.x) && tries != 0);
+		transform.position = newPosition;
+		thingsEaten = 0;
+		maxSize = getSize ();
+		lifespan = 0;
+		GetComponent<NeuralNetwork> ().weights = GetComponentInParent<GeneticAlgorithm> ().getWeights ();
+		//print(GetComponentInParent<GeneticAlgorithm> ().getWeights ());
 	}
 
 	// Keeps bot inbounds, happens every fixedUpdate
@@ -101,4 +137,12 @@ public class Bot : MonoBehaviour {
 	public void setPosition (Vector3 newPosition) {
 		transform.position = newPosition;
 	}
+
+	public float getFitness () {
+		float thingsEatenPart = thingsEaten * thingsEatenWeight;
+		float maxSizePart = maxSize * maxSizeWeight;
+		float lifespanPart = lifespan * lifespanWeight;
+		return thingsEatenPart + maxSizePart + lifespanPart;
+	}
+
 }

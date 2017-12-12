@@ -1,26 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class NeuralNetwork : MonoBehaviour  {
 
-	public int numOfInputs = 360;
-	public int numOfHidden = 360;
-	public int numOfOutputs = 1;
+	public int numOfInputs;
+	public int numOfHidden;
+	public int numOfOutputs;
 	public float[] ins;
-	private float[] weights;
+	public float[] weights;
 	public float[] output;
 
 	void Start () {
 		weights = new float[numOfInputs * numOfHidden + numOfHidden * numOfOutputs];
 		for (int w = 0; w < weights.Length; w++)
-			weights [w] = Random.value * 2.0f - 1.0f;
+			weights [w] = UnityEngine.Random.value * 2.0f - 1.0f;
 		output = new float[numOfOutputs];
 		ins = new float[numOfInputs];
 	}
 
 	public void feedForward (float[] inputs) {
-		ins = inputs;
+		int weightIndex = 0;
 		float[] hidden = new float[numOfHidden];
 		for (int i = 0; i < hidden.Length; i++)
 			hidden [i] = 0.0f;
@@ -28,16 +29,16 @@ public class NeuralNetwork : MonoBehaviour  {
 		// Input to Hidden
 		for (int input = 0; input < inputs.Length; input++) {
 			for (int hid = 0; hid < hidden.Length; hid++) {
-				int weightIndex = input * hidden.Length + hid;
-				hidden [hid] += inputs [input] * weights [weightIndex];
-				//print (hidden [hid]);
+				float weight = weights [weightIndex];
+				float i = inputs [input];
+				hidden [hid] += i * weight;
+				weightIndex++;
 			}
 		}
 
 		// Activate
 		for (int hid = 0; hid < hidden.Length; hid++) {
 			hidden [hid] = sigmoidFunction (hidden [hid]);
-
 		}
 
 		// Hidden to Output
@@ -45,8 +46,8 @@ public class NeuralNetwork : MonoBehaviour  {
 			output [i] = 0.0f;
 		for (int hid = 0; hid < hidden.Length; hid++) {
 			for (int outs = 0; outs < output.Length; outs++) {
-				int weightIndex = hid * output.Length + outs + numOfInputs * numOfHidden;
 				output [outs] += hidden [hid] * weights [weightIndex];
+				weightIndex++;
 			}
 		}
 
@@ -58,8 +59,6 @@ public class NeuralNetwork : MonoBehaviour  {
 	}
 
 	private float sigmoidFunction (float val) {
-		// print (val);
-		//Debug.Log (1 / (1 + Mathf.Exp (-val)));
 		return 1 / (1 + Mathf.Exp (-val));
 	}
 }
