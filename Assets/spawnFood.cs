@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class spawnBots : MonoBehaviour {
+public class spawnFood : MonoBehaviour {
 	public GameObject thingToSpawn;
 	public int numberToSpawn;
 
@@ -21,11 +21,8 @@ public class spawnBots : MonoBehaviour {
 		float height = groundToSpawnOn.transform.localScale.y - 1.0f;
 		for (int spawnCount = 0; spawnCount < numberToSpawn; spawnCount++) {
 			GameObject thing = (GameObject)Instantiate (thingToSpawn);
-			thing.GetComponent<Bot> ().setPosition(new Vector3(
-				Random.value * width - width / 2.0f, 
-				Random.value * height - height / 2.0f, 
-				0));
-			thing.name = "Bot" + spawnCount;
+			thing.GetComponent<Food> ().kill ();
+			thing.name = "Food" + spawnCount;
 		}
 	}
 }

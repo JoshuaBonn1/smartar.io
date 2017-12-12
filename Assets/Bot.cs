@@ -8,6 +8,7 @@ public class Bot : MonoBehaviour {
 
 	// Ground to stay in bounds on, area is in the scale of the ground
 	public GameObject ground;
+	public float sizeReduction;
 
 
 	// Use this for initialization
@@ -19,7 +20,7 @@ public class Bot : MonoBehaviour {
 
 	void Update () {
 		checkBotOverlap ();
-		if (getSize() < 0.3f)
+		if (getSize () < 0.3f || getSize() > 50.0f)
 			kill ();
 	}
 
@@ -27,9 +28,9 @@ public class Bot : MonoBehaviour {
 	void FixedUpdate () {
 		// Move in the direction it is facing
 		// TODO: Add acceleration and max speeds
-		transform.Translate(Vector3.right * maxSpeed * Time.deltaTime);
+		transform.Translate (Vector3.right * maxSpeed * Mathf.Sqrt(getSize()) * Time.deltaTime);
 		stayInBounds ();
-		setSize (getSize () - 0.005f);
+		setSize (getSize () * sizeReduction);
 	}
 
 	private void checkBotOverlap () {
@@ -40,13 +41,12 @@ public class Bot : MonoBehaviour {
 			float distance = Vector2.Distance (transform.position, bot.transform.position);
 			if (distance + bot.gameObject.transform.localScale.x / 2.0f <= getSize () / 2.0f) {
 				bot.SendMessage ("kill");
-				setSize (getSize () + 0.1f);
+				setSize (getSize () + 0.2f * bot.gameObject.transform.localScale.x);
 			}
 		}
 	}
 
 	private void kill () {
-		print ("KILLED");
 		setPosition (new Vector3 (
 			Random.value * 50 - 50 / 2.0f, 
 			Random.value * 50 - 50 / 2.0f, 

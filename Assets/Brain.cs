@@ -8,40 +8,52 @@ public class Brain : MonoBehaviour {
 	public float sightRange;
 	public float[] inputs;
 
+	public NeuralNetwork nn;
+
 	// Use this for initialization
 	void Start () {
 		inputs = new float[360];
+		nn = gameObject.GetComponent<NeuralNetwork> ();
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
 		updateInputs ();
+		//nn.feedForward (inputs);
+		//gameObject.GetComponent<Bot> ().setRotation (nn.output[0]);
 	}
 
 	private void updateInputs () {
 		for (int counter = 0; counter < 360; counter++) {
 			// Convert counter to angle to vector
 			float angle = (float)counter * Mathf.PI / 180.0f;
-			Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+			Vector2 direction = new Vector2 (Mathf.Cos (angle), Mathf.Sin (angle));
+			Vector2 castVector = (Vector2)transform.position + direction * (transform.localScale.x + 0.02f) / 2.0f;
+			RaycastHit2D hit = Physics2D.Raycast(castVector, direction, sightRange);
 
-			//TODO: Switch to Physics2D.Raycast and ignore myself (if possible)
-			//IDEA: Only test for lines outside of self. Use a different mode to check for consumption
-			//IDEA2: If colliding with something, try to overlap myself with their circle. If I am within it, send message
-			RaycastHit2D[] hits = Physics2D.RaycastAll (transform.position, direction, sightRange);
-			if (hits.Length == 1)
-				inputs [counter] = 0;
-			else {
-				inputs [counter] = 1;
-				Debug.DrawRay (transform.position, hits[1].collider.gameObject.transform.position - transform.position, Color.black);
-				float enemy_angle = Vector2.Angle (Vector2.right, (Vector2)hits[1].collider.gameObject.transform.position - (Vector2)transform.position);
-				// If the enemy is below me, subtract angle from 360 to get the correct angle.
-				if (hits[1].collider.gameObject.transform.position.y < transform.position.y)
-					enemy_angle = 360.0f - enemy_angle;
-				gameObject.GetComponent<Bot> ().setRotation (enemy_angle);
-				break;
-			}
+			if (hit) {
+				float edible = -1.0f;
+				float enemySize = hit.collider.transform.localScale.x;
+				if (enemySize < transform.localScale.x)
+					edible = 1.0f;
+				inputs [counter] = (edible) * (enemySize) / (hit.distance);
+				//print (inputs[counter]);
+				Debug.DrawRay (castVector, direction * hit.distance, Color.black,0.1f);
+			} else
+				inputs [counter] = 0.0f;
 			counter++;
 		}
+
+		// Temporary code to follow best individual
+		float maxInput = 0.0f;
+		int maxIndex = 0;
+		for (int i = 0; i < inputs.Length; i++) {
+			if (inputs [i] > maxInput) {
+				maxInput = inputs [i];
+				maxIndex = i;
+			}
+		}
+		gameObject.GetComponent<Bot> ().setRotation (maxIndex);
 	}
 
 }
