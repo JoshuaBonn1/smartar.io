@@ -86,7 +86,11 @@ public class GeneticAlgorithm : MonoBehaviour {
 			else
 				child [i] = parent2 [i];
 			if (Random.value < mutationRate)
-				child [i] += Random.value * 2.0f - 1.0f;
+				child [i] += Random.value * 0.5f - 0.25f;
+			if (child [i] > 5.0f)
+				child [i] = 5.0f;
+			if (child [i] < -5.0f)
+				child [i] = -5.0f;
 		}
 		// Mutation
 		return child;

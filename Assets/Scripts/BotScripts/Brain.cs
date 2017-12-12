@@ -50,15 +50,15 @@ public class Brain : MonoBehaviour {
 		}
 
 		// Temporary code to follow best individual
-		float maxInput = 0.0f;
-		int maxIndex = 0;
-		for (int i = 0; i < inputs.Length; i++) {
-			if (inputs [i] > maxInput) {
-				maxInput = inputs [i];
-				maxIndex = i;
-			}
-		}
-		gameObject.GetComponent<Bot> ().setRotation (maxIndex);
+//		float maxInput = 0.0f;
+//		int maxIndex = 0;
+//		for (int i = 0; i < inputs.Length; i++) {
+//			if (inputs [i] > maxInput) {
+//				maxInput = inputs [i];
+//				maxIndex = i;
+//			}
+//		}
+//		gameObject.GetComponent<Bot> ().setRotation (maxIndex);
 	}
 
 }

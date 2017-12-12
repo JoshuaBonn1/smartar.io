@@ -110,9 +110,9 @@ MonoBehaviour:
   maxSpeed: 5
   ground: {fileID: 0}
   sizeReduction: 0.997
-  thingsEatenWeight: 2
+  thingsEatenWeight: 1
   maxSizeWeight: 1
-  lifespanWeight: 5
+  lifespanWeight: 2
   fitness: 0
 --- !u!114 &114913268363007982
 MonoBehaviour:

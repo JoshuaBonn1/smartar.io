@@ -31,6 +31,7 @@ public class Bot : MonoBehaviour {
 		checkBotOverlap ();
 		if (getSize () < 0.3f || getSize() > 50.0f)
 			kill ();
+		fitness = getFitness ();
 	}
 
 	// Update is called once every physics update
@@ -70,6 +71,7 @@ public class Bot : MonoBehaviour {
 	}
 
 	private void kill () {
+		GetComponent<NeuralNetwork> ().weights = GetComponentInParent<GeneticAlgorithm> ().getWeights ();
 		setSize (1.0f);
 		float width = ground.transform.localScale.x - 1.0f;
 		float height = ground.transform.localScale.y - 1.0f;
@@ -86,7 +88,6 @@ public class Bot : MonoBehaviour {
 		thingsEaten = 0;
 		maxSize = getSize ();
 		lifespan = 0;
-		GetComponent<NeuralNetwork> ().weights = GetComponentInParent<GeneticAlgorithm> ().getWeights ();
 		//print(GetComponentInParent<GeneticAlgorithm> ().getWeights ());
 	}
 
